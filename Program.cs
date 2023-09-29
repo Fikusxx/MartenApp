@@ -22,10 +22,8 @@ services.AddMarten(options =>
 	options.Events.AddEventType<OrderCompletedEvent>();
 
 	options.Schema.Include<OrderRegistry>();
-
-	options.Schema.For<Order>().Identity(x => x.Id);
-	options.Schema.For<OrderSummary>().Identity(x => x.OrderId);
-	options.Schema.For<UserOrdersSummary>().Identity(x => x.UserId);
+	options.Schema.Include<OrderSummaryRegistry>();
+	options.Schema.Include<UserOrdersSummaryRegistry>();
 
 	options.Projections.Add<OrderSingleProjector>(lifecycle: ProjectionLifecycle.Inline);
 	options.Projections.Add<OrderSummarySingleProjector>(lifecycle: ProjectionLifecycle.Inline);

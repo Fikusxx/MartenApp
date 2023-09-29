@@ -26,15 +26,6 @@ public class SingleProjectorController : ControllerBase
 		var order = await ctx.LoadAsync<Order>(orderId);
 		var orderSummary = await ctx.LoadAsync<OrderSummary>(orderId);
 		var userOrdersSummary = await ctx.LoadAsync<UserOrdersSummary>(userId);
-		//var data = await ctx.Events.QueryAllRawEvents().AggregateToAsync<List<Order>>();
-		//var data = await ctx.Events.FetchStreamAsync(id);
-		//var data = ctx.Events.LoadAsync(id);
-		//var data = ctx.Events.QueryAllRawEvents()
-		//	.Where(x => x.StreamId == id)
-		//	.Where(x => x.DotNetTypeName.Contains(nameof(OrderCreatedEvent)))
-		//	.ToList();
-		//var data = await ctx.Events.AggregateStreamAsync<Order>(id, version: 2);
-		//var data = await ctx.Events.AggregateStreamAsync<Order>(id, timestamp: DateTime.UtcNow.AddDays(-1));
 
 		return Ok(order);
 	}
