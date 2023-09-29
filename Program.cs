@@ -3,6 +3,10 @@ using Marten.Events.Projections;
 using MartenApp.Registries;
 using MartenApp.Events;
 using Marten;
+using JasperFx.Core;
+using Marten.Events.Daemon;
+using Marten.Exceptions;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -28,6 +32,27 @@ services.AddMarten(options =>
 	options.Projections.Add<OrderSingleProjector>(lifecycle: ProjectionLifecycle.Inline);
 	options.Projections.Add<OrderSummarySingleProjector>(lifecycle: ProjectionLifecycle.Inline);
 	options.Projections.Add<UserOrdersSummaryProjector>(lifecycle: ProjectionLifecycle.Inline);
+
+
+	options.Projections.OnException<EventFetcherException>()
+		.RetryLater(250.Milliseconds(), 500.Milliseconds(), 1.Seconds())
+		.Then.Pause(30.Seconds());
+
+	options.Projections.OnException<ShardStopException>().DoNothing();
+
+	options.Projections.OnException<ShardStartException>()
+		.RetryLater(250.Milliseconds(), 500.Milliseconds(), 1.Seconds())
+		.Then.DoNothing();
+
+	options.Projections.OnException<NpgsqlException>()
+		.RetryLater(250.Milliseconds(), 500.Milliseconds(), 1.Seconds())
+		.Then.Pause(30.Seconds());
+
+	options.Projections.OnException<MartenCommandException>()
+		.RetryLater(250.Milliseconds(), 500.Milliseconds(), 1.Seconds())
+		.Then.Pause(30.Seconds());
+
+	options.Projections.OnException<ProgressionProgressOutOfOrderException>().Pause(10.Seconds());
 })
 	.UseLightweightSessions()
 	.AddAsyncDaemon(DaemonMode.Solo);

@@ -7,7 +7,11 @@ public class UserOrdersSummaryProjector : MultiStreamProjection<UserOrdersSummar
     public UserOrdersSummaryProjector()
     {
         Identity<IHasUserId>(x => x.UserId);
-    }
+
+		IncludeType<OrderCreatedEvent>();
+		IncludeType<OrderUpdatedEvent>();
+		IncludeType<OrderCompletedEvent>();
+	}
 
     public void Apply(UserOrdersSummary snapshot, OrderCreatedEvent e)
     {

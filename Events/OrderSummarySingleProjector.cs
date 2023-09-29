@@ -4,7 +4,14 @@ namespace MartenApp.Events;
 
 public class OrderSummarySingleProjector : SingleStreamProjection<OrderSummary>
 {
-	public OrderSummary Create(OrderCreatedEvent e)
+    public OrderSummarySingleProjector()
+    {
+		IncludeType<OrderCreatedEvent>();
+		IncludeType<OrderUpdatedEvent>();
+		IncludeType<OrderCompletedEvent>();
+	}
+
+    public OrderSummary Create(OrderCreatedEvent e)
 	{
 		var data = new OrderSummary();
 		data.Qty += e.Qty;

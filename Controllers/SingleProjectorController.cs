@@ -23,6 +23,7 @@ public class SingleProjectorController : ControllerBase
 	[Route("get")]
 	public async Task<IActionResult> Get()
 	{
+		var data = ctx.Query<Order>().Where(x => x.Id == orderId).ToList();
 		var order = await ctx.LoadAsync<Order>(orderId);
 		var orderSummary = await ctx.LoadAsync<OrderSummary>(orderId);
 		var userOrdersSummary = await ctx.LoadAsync<UserOrdersSummary>(userId);

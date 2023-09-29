@@ -8,7 +8,10 @@ public class OrderSingleProjector : SingleStreamProjection<Order>
     {
 		DeleteEvent<OrderCancelledEvent>();
 		DeleteEvent<OrderRefundedEvent>(x => x.Reason == "KEKW");
-		
+
+		IncludeType<OrderCreatedEvent>();
+		IncludeType<OrderUpdatedEvent>();
+		IncludeType<OrderCompletedEvent>();
     }
 
     public Order Create(OrderCreatedEvent e)
