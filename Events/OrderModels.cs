@@ -1,7 +1,9 @@
-﻿namespace MartenApp.Events;
+﻿using MartenApp.Repositories;
+
+namespace MartenApp.Events;
 
 // Aggregate
-public class Order
+public class Order : IAggregateRoot
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
@@ -9,7 +11,7 @@ public class Order
 }
 
 // Singlestream Read Model
-public class OrderSummary
+public class OrderSummary : IReadModel
 {
     public Guid OrderId { get; set; }
     public List<string> Names { get; set; } = new();
@@ -17,7 +19,7 @@ public class OrderSummary
 }
 
 // Multistream Read Model
-public class UserOrdersSummary
+public class UserOrdersSummary : IReadModel
 {
     public Guid UserId { get; set; }
     public List<Guid> OrderIds { get; set; } = new();
