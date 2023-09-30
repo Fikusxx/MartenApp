@@ -7,6 +7,7 @@ using MartenApp.Events;
 using JasperFx.Core;
 using Marten;
 using Npgsql;
+using MartenApp.Interceptors;
 
 namespace MartenApp.MartenExtensions;
 
@@ -18,6 +19,8 @@ public static class DependencyInjection
 		{
 			var connection = configuration.GetConnectionString("Marten");
 			options.Connection(connection!);
+
+			options.RetryPolicy(DefaultRetryPolicy.Times(3));
 
 			#region Projection exception retry policies
 			options.Projections.OnException<EventFetcherException>()
@@ -42,7 +45,10 @@ public static class DependencyInjection
 			#endregion
 		})
 			.UseLightweightSessions()
+			//.OptimizeArtifactWorkflow()
+			.ApplyAllDatabaseChangesOnStartup()
 			.AddAsyncDaemon(DaemonMode.HotCold);
+
 
 		services.AddOrderModule();
 
@@ -61,9 +67,15 @@ public static class DependencyInjection
 			options.RegisterDocumentType<OrderSummary>();
 			options.RegisterDocumentType<UserOrdersSummary>();
 
+			options.RegisterDocumentType<MessageOutbox>();
+
 			options.Schema.Include<OrderRegistry>();
 			options.Schema.Include<OrderSummaryRegistry>();
 			options.Schema.Include<UserOrdersSummaryRegistry>();
+
+			options.RetryPolicy();
+
+			options.Listeners.Add(new Interceptor());
 
 			options.Projections.Add<OrderSingleProjector>(lifecycle: ProjectionLifecycle.Inline);
 			options.Projections.Add<OrderSummarySingleProjector>(lifecycle: ProjectionLifecycle.Inline);

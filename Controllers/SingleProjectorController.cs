@@ -12,6 +12,7 @@ public class SingleProjectorController : ControllerBase
 	private readonly IOrderRepository orderRepo;
 	private readonly IOrderSummaryRepository orderSummaryRepo;
 
+	private readonly IDocumentStore store;
 	private readonly IDocumentSession ctx;
 	private readonly IQuerySession query;
 	private readonly Guid orderId = Guid.Parse("8a2c17e9-d56f-47e7-ad52-369550fc0c6a");
@@ -38,6 +39,7 @@ public class SingleProjectorController : ControllerBase
 		var orderSnapshot = await orderRepo.LoadAsync(orderId);
 		var orderStream = await orderRepo.AggregateAsync(orderId, 1);
 		var orderSummarySnapshot = await orderSummaryRepo.LoadAsync(orderId);
+
 
 		return Ok(order);
 	}

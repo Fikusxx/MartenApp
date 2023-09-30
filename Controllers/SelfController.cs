@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MartenApp.Events;
+using Newtonsoft.Json;
 using Marten;
 
 namespace MartenApp.Controllers;
@@ -58,5 +59,33 @@ public class SelfController : ControllerBase
 		await ctx.SaveChangesAsync();
 
 		return Ok();
+	}
+
+	[HttpGet]
+	[Route("get-domain-events")]
+	public async Task<IActionResult> GetDomainEvents()
+	{
+		// imagine this is a back task or smth
+		var events = ctx.Query<MessageOutbox>().Take(10).ToList();
+
+		// or just while(true) effectively with "await Task.Delay(ms, ct);"
+		if (events.Count <= 0)
+			await Task.CompletedTask;
+
+		var converted = new List<IDomainEvent>();
+
+		var options = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+		events.ForEach(x =>
+		{
+			var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(x.Content, options);
+			converted.Add(domainEvent);
+		});
+
+		// publish events
+
+		ctx.DeleteObjects(events);
+		await ctx.SaveChangesAsync();
+
+		return Ok(converted);
 	}
 }
