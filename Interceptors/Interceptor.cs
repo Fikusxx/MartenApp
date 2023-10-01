@@ -27,12 +27,12 @@ public class Interceptor : DocumentSessionListenerBase
 			return Task.CompletedTask;
 
 		var outboxMessages = new List<MessageOutbox>();
+		var options = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
 
 		events.ForEach(x =>
 		{
 			if (x.Data is IDomainEvent e)
 			{
-				var options = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
 				var data = JsonConvert.SerializeObject(e, options);
 				var outbox = new MessageOutbox() { Id = Guid.NewGuid(), CreateAt = DateTime.UtcNow, Content = data };
 				outboxMessages.Add(outbox);

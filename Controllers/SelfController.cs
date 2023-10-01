@@ -32,7 +32,7 @@ public class SelfController : ControllerBase
 	[Route("create")]
 	public async Task<IActionResult> Create()
 	{
-		var @event = new OrderCreatedEvent(Guid.NewGuid(), orderId, userId, "Start", 10);
+		var @event = new OrderCreatedEvent(orderId, userId, "Start", 10);
 		ctx.Events.StartStream(orderId, @event);
 		await ctx.SaveChangesAsync();
 
@@ -43,7 +43,7 @@ public class SelfController : ControllerBase
 	[Route("update")]
 	public async Task<IActionResult> Update()
 	{
-		var @event = new OrderUpdatedEvent(Guid.NewGuid(), orderId, userId, 5);
+		var @event = new OrderUpdatedEvent(orderId, userId, 5);
 		await ctx.Events.AppendOptimistic(orderId, @event);
 		await ctx.SaveChangesAsync();
 
@@ -54,7 +54,7 @@ public class SelfController : ControllerBase
 	[Route("complete")]
 	public async Task<IActionResult> Complete()
 	{
-		var @event = new OrderCompletedEvent(Guid.NewGuid(), orderId, userId, "Completed");
+		var @event = new OrderCompletedEvent(orderId, userId, "Completed");
 		await ctx.Events.AppendOptimistic(orderId, @event);
 		await ctx.SaveChangesAsync();
 
@@ -82,9 +82,12 @@ public class SelfController : ControllerBase
 		});
 
 		// publish events
+		// IMPORTANT
+		// before publishing - specify property/headers messageId = outbox.Id
+		// for potential idempotency check on consumer side
 
-		ctx.DeleteObjects(events);
-		await ctx.SaveChangesAsync();
+		//ctx.DeleteObjects(events);
+		//await ctx.SaveChangesAsync();
 
 		return Ok(converted);
 	}

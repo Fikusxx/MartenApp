@@ -2,6 +2,7 @@
 using MartenApp.Repositories;
 using MartenApp.Events;
 using Marten;
+using JasperFx.CodeGeneration.Frames;
 
 namespace MartenApp.Controllers;
 
@@ -18,7 +19,7 @@ public class SingleProjectorController : ControllerBase
 	private readonly Guid orderId = Guid.Parse("8a2c17e9-d56f-47e7-ad52-369550fc0c6a");
 	private readonly Guid userId = Guid.Parse("9b088d1a-97bc-467a-83fa-5e5c90cbc7cf");
 
-	public SingleProjectorController(IDocumentSession ctx, IQuerySession query, 
+	public SingleProjectorController(IDocumentSession ctx, IQuerySession query,
 		IOrderRepository orderRepo, IOrderSummaryRepository orderSummaryRepo)
 	{
 		this.ctx = ctx;
@@ -41,6 +42,12 @@ public class SingleProjectorController : ControllerBase
 		var orderSummarySnapshot = await orderSummaryRepo.LoadAsync(orderId);
 
 
+		var user1 = new User(Guid.NewGuid());
+		var user2 = new User(Guid.NewGuid());
+		var issue1 = new Issue(user1.Id, "Issue #1");
+		var issue2 = new Issue(user2.Id, "Issue #2");
+		var issue3 = new Issue(user2.Id, "Issue #3");
+
 		return Ok(order);
 	}
 
@@ -50,7 +57,10 @@ public class SingleProjectorController : ControllerBase
 	{
 		var daemon = await store.BuildProjectionDaemonAsync();
 		await daemon.RebuildProjection<OrderSingleProjector>(CancellationToken.None);
-		 
+
 		return Ok();
 	}
 }
+
+public record User(Guid Id);
+public record Issue(Guid UserId, string Title);

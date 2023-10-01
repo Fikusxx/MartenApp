@@ -78,8 +78,8 @@ public static class DependencyInjection
 			options.Listeners.Add(new Interceptor());
 
 			options.Projections.Add<OrderSingleProjector>(lifecycle: ProjectionLifecycle.Inline);
-			options.Projections.Add<OrderSummarySingleProjector>(lifecycle: ProjectionLifecycle.Inline);
-			options.Projections.Add<UserOrdersSummaryProjector>(lifecycle: ProjectionLifecycle.Inline);
+			options.Projections.Add<OrderSummarySingleProjector>(lifecycle: ProjectionLifecycle.Async);
+			options.Projections.Add<UserOrdersSummaryProjector>(lifecycle: ProjectionLifecycle.Async);
 		});
 
 		return services;
