@@ -33,7 +33,9 @@ public class SelfController : ControllerBase
 	public async Task<IActionResult> Create()
 	{
 		var @event = new OrderCreatedEvent(orderId, userId, "Start", 10);
+		//var @event = new OrderCreatedEvent(Guid.NewGuid(), Guid.NewGuid(), "Start", 10);
 		ctx.Events.StartStream(orderId, @event);
+		//ctx.Events.StartStream(@event.OrderId, @event);
 		await ctx.SaveChangesAsync();
 
 		return Ok();

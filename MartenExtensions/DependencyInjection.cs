@@ -1,5 +1,7 @@
 ﻿using Marten.Events.Daemon.Resiliency;
 using Marten.Events.Projections;
+using MartenApp.Interceptors;
+using MartenApp.Controllers;
 using MartenApp.Registries;
 using Marten.Events.Daemon;
 using Marten.Exceptions;
@@ -7,7 +9,6 @@ using MartenApp.Events;
 using JasperFx.Core;
 using Marten;
 using Npgsql;
-using MartenApp.Interceptors;
 
 namespace MartenApp.MartenExtensions;
 
@@ -72,6 +73,10 @@ public static class DependencyInjection
 			options.Schema.Include<OrderRegistry>();
 			options.Schema.Include<OrderSummaryRegistry>();
 			options.Schema.Include<UserOrdersSummaryRegistry>();
+
+			options.Schema.For<BaseClass>()
+				.AddSubClass<FirstSubClass>()
+				.AddSubClass<SecondSubClass>();
 
 			options.RetryPolicy();
 

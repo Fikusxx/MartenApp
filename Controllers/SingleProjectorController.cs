@@ -2,7 +2,6 @@
 using MartenApp.Repositories;
 using MartenApp.Events;
 using Marten;
-using JasperFx.CodeGeneration.Frames;
 
 namespace MartenApp.Controllers;
 
@@ -32,23 +31,16 @@ public class SingleProjectorController : ControllerBase
 	[Route("get")]
 	public async Task<IActionResult> Get()
 	{
-		var data = ctx.Query<Order>().Where(x => x.Id == orderId).ToList();
-		var order = await ctx.LoadAsync<Order>(orderId);
-		var orderSummary = await ctx.LoadAsync<OrderSummary>(orderId);
-		var userOrdersSummary = await ctx.LoadAsync<UserOrdersSummary>(userId);
+		//var data = ctx.Query<Order>().Where(x => x.Id == orderId).ToList();
+		//var order = await ctx.LoadAsync<Order>(orderId);
+		//var orderSummary = await ctx.LoadAsync<OrderSummary>(orderId);
+		//var userOrdersSummary = await ctx.LoadAsync<UserOrdersSummary>(userId);
 
-		var orderSnapshot = await orderRepo.LoadAsync(orderId);
-		var orderStream = await orderRepo.AggregateAsync(orderId, 1);
-		var orderSummarySnapshot = await orderSummaryRepo.LoadAsync(orderId);
+		//var orderSnapshot = await orderRepo.LoadAsync(orderId);
+		//var orderStream = await orderRepo.AggregateAsync(orderId, 1);
+		//var orderSummarySnapshot = await orderSummaryRepo.LoadAsync(orderId);
 
-
-		var user1 = new User(Guid.NewGuid());
-		var user2 = new User(Guid.NewGuid());
-		var issue1 = new Issue(user1.Id, "Issue #1");
-		var issue2 = new Issue(user2.Id, "Issue #2");
-		var issue3 = new Issue(user2.Id, "Issue #3");
-
-		return Ok(order);
+		return Ok();
 	}
 
 	[HttpGet]
@@ -61,6 +53,3 @@ public class SingleProjectorController : ControllerBase
 		return Ok();
 	}
 }
-
-public record User(Guid Id);
-public record Issue(Guid UserId, string Title);

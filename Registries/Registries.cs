@@ -7,7 +7,6 @@ public class OrderRegistry : MartenRegistry
 {
 	public OrderRegistry()
 	{
-		For<Order>().Duplicate(x => x.Name);
 		For<Order>().Identity(x => x.Id);
 	}
 }

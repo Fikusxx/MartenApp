@@ -14,6 +14,7 @@ public class Order : IAggregateRoot
 public class OrderSummary : IReadModel
 {
     public Guid OrderId { get; set; }
+    public Guid UserId { get; set; }
     public List<string> Names { get; set; } = new();
     public int Qty { get; set; }
 }

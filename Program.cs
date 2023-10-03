@@ -1,12 +1,3 @@
-using Marten.Events.Daemon.Resiliency;
-using Marten.Events.Projections;
-using MartenApp.Registries;
-using MartenApp.Events;
-using Marten;
-using JasperFx.Core;
-using Marten.Events.Daemon;
-using Marten.Exceptions;
-using Npgsql;
 using MartenApp.MartenExtensions;
 using MartenApp.Repositories;
 

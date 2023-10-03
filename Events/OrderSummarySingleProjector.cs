@@ -13,8 +13,13 @@ public class OrderSummarySingleProjector : SingleStreamProjection<OrderSummary>
 
     public OrderSummary Create(OrderCreatedEvent e)
 	{
-		var data = new OrderSummary();
-		data.Qty += e.Qty;
+		var data = new OrderSummary() 
+		{ 
+			OrderId = e.OrderId,
+			UserId = e.UserId,
+			Qty = e.Qty
+		};
+
 		data.Names.Add(e.Name);
 
 		return data;

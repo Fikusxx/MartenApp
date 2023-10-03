@@ -16,7 +16,9 @@ public class OrderSingleProjector : SingleStreamProjection<Order>
 
     public Order Create(OrderCreatedEvent e)
 	{
-		return new Order() { Id = e.OrderId, Name = e.Name, Qty = e.Qty };
+		var data = new Order() { Id = e.OrderId, Name = e.Name, Qty = e.Qty };
+
+		return data;
 	}
 
 	public void Apply(Order snapshot, OrderUpdatedEvent e)
