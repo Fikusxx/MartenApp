@@ -23,4 +23,12 @@ public class LoggingController : ControllerBase
 
 		return Ok(":)");
 	}
+
+	[HttpGet]
+	[Route("Etag")]
+	public IActionResult GetWithEtag()
+	{
+		//return Ok("privet");
+		return Ok(1231231);
+	}
 }

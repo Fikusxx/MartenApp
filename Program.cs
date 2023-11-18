@@ -1,3 +1,4 @@
+using MartenApp.Etag;
 using MartenApp.LoggingMediatr;
 using MartenApp.MartenExtensions;
 using MartenApp.Repositories;
@@ -85,6 +86,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ETagMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseAuthorization();
 
