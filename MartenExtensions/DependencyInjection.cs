@@ -78,13 +78,11 @@ public static class DependencyInjection
 				.AddSubClass<FirstSubClass>()
 				.AddSubClass<SecondSubClass>();
 
-			options.RetryPolicy();
-
 			options.Listeners.Add(new Interceptor());
 
 			options.Projections.Add<OrderSingleProjector>(lifecycle: ProjectionLifecycle.Inline);
-			options.Projections.Add<OrderSummarySingleProjector>(lifecycle: ProjectionLifecycle.Async);
-			options.Projections.Add<UserOrdersSummaryProjector>(lifecycle: ProjectionLifecycle.Async);
+			options.Projections.Add<OrderSummarySingleProjector>(lifecycle: ProjectionLifecycle.Inline);
+			options.Projections.Add<UserOrdersSummaryProjector>(lifecycle: ProjectionLifecycle.Inline);
 		});
 
 		return services;

@@ -8,6 +8,7 @@ public class OrderRegistry : MartenRegistry
 	public OrderRegistry()
 	{
 		For<Order>().Identity(x => x.Id);
+		For<Order>().GinIndexJsonData();
 	}
 }
 

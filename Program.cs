@@ -1,9 +1,24 @@
+using MartenApp.LoggingMediatr;
 using MartenApp.MartenExtensions;
 using MartenApp.Repositories;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
+
+
+builder.Host.UseSerilog((ctx, cfg) =>
+{
+	// take settings from app settings
+	//cfg.ReadFrom.Configuration(ctx.Configuration);
+
+	var cs = "host=localhost;port=5432;database=postgres;password=wc3alive;username=postgres";
+	cfg.WriteTo.PostgreSQL(connectionString: cs, tableName: "Logs", needAutoCreateTable: true)
+			.MinimumLevel.Warning();
+});
+
+builder.Services.RegisterBestServicesEverCreated();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -58,6 +73,11 @@ services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
 
 var app = builder.Build();
 
+app.UseCors(builder =>
+		 builder.AllowAnyOrigin()
+				.AllowAnyMethod()
+				.AllowAnyHeader());
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -65,6 +85,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+app.UseSerilogRequestLogging();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -14,16 +14,24 @@ public class SelfController : ControllerBase
 	//private readonly Guid orderId = Guid.Parse("8a3c17e9-d56f-47e7-ad52-369550fc0c6a");
 	private readonly Guid userId = Guid.Parse("9b088d1a-97bc-467a-83fa-5e5c90cbc7cf");
 
-	public SelfController(IDocumentSession ctx)
+	private readonly ILogger<SelfController> logger;
+
+	public SelfController(IDocumentSession ctx, ILogger<SelfController> logger)
 	{
 		this.ctx = ctx;
+		this.logger = logger;
 	}
+
+
 
 	[HttpGet]
 	[Route("get")]
 	public async Task<IActionResult> Get()
 	{
-		var data = await ctx.Events.AggregateStreamAsync<Order>(orderId);
+		logger.LogError(new Exception("Something Hanppened"), "KEKW");
+		//var data = await ctx.Events.AggregateStreamAsync<Order>(orderId);
+		var data = await ctx.Events.AggregateStreamAsync<OrderSummary>(orderId);
+		//var data = await ctx.Events.AggregateStreamAsync<UserOrdersSummary>(orderId);
 
 		return Ok(data);
 	}
