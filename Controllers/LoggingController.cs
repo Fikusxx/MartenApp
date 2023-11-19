@@ -31,4 +31,11 @@ public class LoggingController : ControllerBase
 		//return Ok("privet");
 		return Ok(1231231);
 	}
+
+	[HttpGet]
+	[Route("error :)")]
+	public IActionResult GetThatJuicyError()
+	{
+		throw new Exception("-_-");
+	}
 }

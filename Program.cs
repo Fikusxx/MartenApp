@@ -1,6 +1,6 @@
-using MartenApp.Etag;
 using MartenApp.LoggingMediatr;
 using MartenApp.MartenExtensions;
+using MartenApp.Middlewares;
 using MartenApp.Repositories;
 using Serilog;
 
@@ -72,6 +72,9 @@ services.RegisterMarten(configuration);
 services.AddScoped<IOrderRepository, OrderRepository>();
 services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
 
+//services.AddProblemDetails();
+//services.AddExceptionHandler<ExHandler>();
+
 var app = builder.Build();
 
 app.UseCors(builder =>
@@ -86,7 +89,9 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+//app.UseExceptionHandler();
 app.UseMiddleware<ETagMiddleware>();
+app.UseMiddleware<ExMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseAuthorization();
 

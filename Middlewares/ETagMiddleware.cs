@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using Microsoft.Net.Http.Headers;
 using System.Text;
 
-namespace MartenApp.Etag;
+namespace MartenApp.Middlewares;
 
 public sealed class ETagMiddleware
 {
@@ -66,6 +66,6 @@ public sealed class ETagMiddleware
 
 	private static string GetKey(HttpRequest request)
 	{
-		return UriHelper.GetDisplayUrl(request);
+		return request.GetDisplayUrl();
 	}
 }
