@@ -9,10 +9,12 @@ namespace MartenApp.Controllers;
 public class LoggingController : ControllerBase
 {
 	private readonly IMediator mediator;
+	private readonly TimeProvider timeProvider;
 
-	public LoggingController(IMediator mediator)
+	public LoggingController(IMediator mediator, TimeProvider timeProvider)
 	{
 		this.mediator = mediator;
+		this.timeProvider = timeProvider;
 	}
 
 	[HttpGet]
@@ -28,7 +30,19 @@ public class LoggingController : ControllerBase
 	[Route("Etag")]
 	public IActionResult GetWithEtag()
 	{
-		//return Ok("privet");
+		var utcNow = timeProvider.GetUtcNow();
+		var localNow = timeProvider.GetLocalNow();
+		var localTZ = timeProvider.LocalTimeZone;
+
+		var utcNow1 = DateTimeOffset.UtcNow;
+		var localNow1 = DateTimeOffset.Now;
+		var localNow2 = utcNow1.LocalDateTime;
+		var localTZ1 = TimeZoneInfo.Local;
+
+		var local = timeProvider.GetLocalNow();
+		var cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+		var converted = TimeZoneInfo.ConvertTime(local, cstZone);
+
 		return Ok(1231231);
 	}
 

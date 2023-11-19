@@ -72,6 +72,8 @@ services.RegisterMarten(configuration);
 services.AddScoped<IOrderRepository, OrderRepository>();
 services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
 
+services.AddSingleton(TimeProvider.System);
+
 //services.AddProblemDetails();
 //services.AddExceptionHandler<ExHandler>();
 
