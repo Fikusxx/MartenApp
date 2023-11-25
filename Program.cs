@@ -1,7 +1,9 @@
+using MartenApp.Auth;
 using MartenApp.LoggingMediatr;
 using MartenApp.MartenExtensions;
 using MartenApp.Middlewares;
 using MartenApp.Repositories;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +25,41 @@ builder.Services.RegisterBestServicesEverCreated();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+#region Swagger
+builder.Services.AddSwaggerGen(options =>
+{
+	// id to match security definition with a scheme
+	var apiSecurityName = "ApiKey";
+
+	// Authorize template top right corner
+	options.AddSecurityDefinition(apiSecurityName, new OpenApiSecurityScheme()
+	{
+		Description = "Api key security",
+		Type = SecuritySchemeType.ApiKey,
+		Name = AuthConfiguration.ApiKeyHeader,
+		In = ParameterLocation.Header,
+		Scheme = "ApiKeyScheme"
+	});
+
+	var scheme = new OpenApiSecurityScheme()
+	{
+		Reference = new OpenApiReference()
+		{
+			Id = apiSecurityName,
+			Type = ReferenceType.SecurityScheme
+		},
+		In = ParameterLocation.Header
+	};
+
+	var requirement = new OpenApiSecurityRequirement()
+	{
+		{scheme, new List<string>()}
+	};
+
+	options.AddSecurityRequirement(requirement);
+});
+#endregion
 
 #region Default Marten registration
 //services.AddMarten(options =>
@@ -74,10 +110,36 @@ services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
 
 services.AddSingleton(TimeProvider.System);
 
-//services.AddProblemDetails();
-//services.AddExceptionHandler<ExHandler>();
+#region Localization TBD
+//builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
+//	.AddRequestLocalization(options =>
+//	{
+//		var supported = new[] { "en", "es" };
+//		options.SetDefaultCulture(supported[0])
+//				.AddSupportedCultures(supported)
+//				.AddSupportedUICultures(supported);
+//	});
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+	var supportedCultures = new[] { "en-US", "es-ES", "de-DE" };
+	options.SetDefaultCulture(supportedCultures[0])
+		.AddSupportedCultures(supportedCultures)
+		.AddSupportedUICultures(supportedCultures);
+
+	options.FallBackToParentUICultures = true;
+
+	// browser wont override query params
+	//var headerProvider = options.RequestCultureProviders.OfType<AcceptLanguageHeaderRequestCultureProvider>().FirstOrDefault();
+	//options.RequestCultureProviders.Remove(headerProvider);
+
+});
+#endregion
 
 var app = builder.Build();
+
+app.UseRequestLocalization();
 
 app.UseCors(builder =>
 		 builder.AllowAnyOrigin()
@@ -91,7 +153,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-//app.UseExceptionHandler();
+//app.UseMiddleware<ApiKeyMiddleware>();
 app.UseMiddleware<ETagMiddleware>();
 app.UseMiddleware<ExMiddleware>();
 app.UseSerilogRequestLogging();

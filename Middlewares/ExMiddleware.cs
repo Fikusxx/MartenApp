@@ -21,7 +21,6 @@ public sealed class ExMiddleware
 		}
 		catch (Exception ex)
 		{
-
 			await HandleExceptionAsync(context, ex);
 		}
 	}
