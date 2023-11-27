@@ -4,12 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>fc7ea6f4-7782-41a0-a2fa-fefd7af784c0</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Marten" Version="6.2.0" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
     <PackageReference Include="Serilog" Version="3.1.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.3.0" />
