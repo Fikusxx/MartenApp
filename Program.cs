@@ -4,7 +4,11 @@ using MartenApp.MartenExtensions;
 using MartenApp.Middlewares;
 using MartenApp.Repositories;
 using Microsoft.OpenApi.Models;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
 using Serilog;
+using MartenApp.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -109,6 +113,28 @@ services.AddScoped<IOrderRepository, OrderRepository>();
 services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
 
 services.AddSingleton(TimeProvider.System);
+
+#region Mongo DB
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+
+BsonClassMap.RegisterClassMap<Game>(map =>
+{
+	// maps all properties automatically, only required along with other mappings
+	map.AutoMap();
+
+	// properties that are not mapped will be null assigned
+	map.MapIdProperty(x => x.Id);
+	map.MapMember(x => x.Item);
+	map.MapMember(x => x.Qty);
+	map.MapMember(x => x.Genres);
+
+	map.SetIgnoreExtraElements(true);
+});
+
+
+#endregion
+
 
 #region Localization TBD
 //builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")

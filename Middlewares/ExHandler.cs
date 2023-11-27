@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Net.Mime;
 
 namespace MartenApp.Middlewares;
 
+// add 
+// services.AddExceptionHandler();
+// app.UseExceptionHandler();
 public sealed class ExHandler : IExceptionHandler
 {
 	public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -22,6 +27,15 @@ public sealed class ExHandler : IExceptionHandler
 
 		// log that shit
 
+		httpContext.Response.StatusCode = 400;
+		httpContext.Response.ContentType = MediaTypeNames.Application.Json;
+		var result = JsonConvert.SerializeObject(details);
+		await httpContext.Response.WriteAsync(result, cancellationToken);
+
+		return true;
+
+		#region Or
+
 		await Results.Problem(
 			title: "Some really bad things happened :(",
 			statusCode: StatusCodes.Status500InternalServerError,
@@ -33,6 +47,8 @@ public sealed class ExHandler : IExceptionHandler
 			).ExecuteAsync(httpContext);
 
 		return true;
+
+		#endregion
 	}
 }
 
